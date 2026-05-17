@@ -24,7 +24,11 @@ def _parse_dates(series: pd.Series) -> pd.Series:
     return pd.to_datetime(series, errors="coerce", utc=True).dt.tz_convert(None).dt.normalize()
 
 
-def preprocess_reviews(df: pd.DataFrame) -> tuple[pd.DataFrame, PreprocessReport]:
+def preprocess_reviews(
+    df: pd.DataFrame,
+    *,
+    include_review_id: bool = False,
+) -> tuple[pd.DataFrame, PreprocessReport]:
     """
     Clean scraped reviews per assignment spec.
 

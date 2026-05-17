@@ -2,9 +2,9 @@ name: Unit tests
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, task-1, task-2, task-3, task-4]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, task-1, task-2, task-3, task-4]
 
 jobs:
   test:

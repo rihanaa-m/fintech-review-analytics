@@ -25,7 +25,8 @@ pip install -r requirements.txt
 
 - **`main`**: stable branch with setup, CI, and merged task work
 - **`task-1`**: data collection and preprocessing
-- **`task-2`**, **`task-3`**, **`task-4`**: later tasks (merge via pull requests)
+- **`task-2`**: sentiment and thematic analysis (current)
+- **`task-3`**, **`task-4`**: database and insights (merge via pull requests)
 
 Use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
 
@@ -70,3 +71,29 @@ python scripts/preprocess_reviews.py
 4. Output columns: `review`, `rating`, `date`, `bank`, `source`
 
 CSV and raw JSON files are listed in `.gitignore` and must not be pushed to GitHub.
+
+## Task 2.1 — Sentiment analysis (interim)
+
+### Model and rationale
+
+- **Model:** `distilbert-base-uncased-finetuned-sst-2-english` (Hugging Face Transformers)
+- **Why:** Strong accuracy on short English text; fits Play Store review length. SST-2 is binary (positive/negative); reviews with confidence below **0.55** are labeled **neutral**.
+- **Output:** `sentiment_label` (positive / negative / neutral), `sentiment_score` (model confidence 0–1)
+
+### Run sentiment + chart
+
+```bash
+# Requires Task 1 cleaned data locally
+python scripts/run_sentiment_analysis.py
+python scripts/plot_sentiment.py
+```
+
+**Outputs (local, gitignored under `data/processed/`):**
+
+| File | Description |
+|------|-------------|
+| `sentiment_results.csv` | Per review: `review_id`, `review_text`, `sentiment_label`, `sentiment_score`, `identified_theme` |
+| `sentiment_by_bank.csv` | Aggregated means and label % per bank |
+| `sentiment_by_bank_rating.csv` | Mean sentiment by bank and star rating |
+
+**Interim chart (committed):** `analysis_outputs/task2/sentiment_by_bank.png`

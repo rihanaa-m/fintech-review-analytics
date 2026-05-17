@@ -27,6 +27,7 @@ Thumbs.db
 data/
 *.csv
 *.db
+*.pdf
 
 # Local tooling
 .pytest_cache/
