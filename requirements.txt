@@ -5,6 +5,12 @@ pandas>=2.1.0,<3
 # Scraping (Task 1)
 google-play-scraper>=1.2.0,<2
 
+# NLP / sentiment (Task 2)
+transformers>=4.40.0,<5
+torch>=2.2.0,<3
+matplotlib>=3.8.0,<4
+seaborn>=0.13.0,<1
+
 # Notebooks
 ipykernel>=6.29.0,<7
 
