@@ -54,17 +54,21 @@ def main() -> None:
     parser.add_argument(
         "--input",
         type=Path,
-        default=ROOT / "data" / "processed" / "sentiment_results.csv",
+        default=ROOT / "data" / "processed" / "reviews_analyzed.csv",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "analysis_outputs" / "task2" / "sentiment_by_bank.png",
+        default=ROOT / "analysis_outputs" / "task2" / "sentiment_by_bank_distilbert.png",
     )
     args = parser.parse_args()
 
     if not args.input.is_file():
-        raise SystemExit(f"Missing {args.input}. Run scripts/run_sentiment_analysis.py first.")
+        fallback = ROOT / "data" / "processed" / "sentiment_results.csv"
+        if fallback.is_file():
+            args.input = fallback
+        else:
+            raise SystemExit(f"Missing {args.input}. Run Task 2 pipeline first.")
 
     df = pd.read_csv(args.input)
     plot_sentiment_by_bank(df, args.output)

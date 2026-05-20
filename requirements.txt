@@ -8,8 +8,14 @@ google-play-scraper>=1.2.0,<2
 # NLP / sentiment (Task 2)
 transformers>=4.40.0,<5
 torch>=2.2.0,<3
+scikit-learn>=1.4.0,<2
+vaderSentiment>=3.3.2,<4
 matplotlib>=3.8.0,<4
 seaborn>=0.13.0,<1
+
+# Database (Task 3)
+sqlalchemy>=2.0.0,<3
+psycopg2-binary>=2.9.0,<3
 
 # Notebooks
 ipykernel>=6.29.0,<7

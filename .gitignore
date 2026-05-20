@@ -28,6 +28,8 @@ data/
 *.csv
 *.db
 *.pdf
+!docs/*.pdf
+database/seed_reviews.sql
 
 # Local tooling
 .pytest_cache/

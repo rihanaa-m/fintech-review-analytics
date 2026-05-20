@@ -21,6 +21,8 @@ from src.sentiment import (
     MODEL_NAME,
     aggregate_by_bank,
     aggregate_by_bank_and_rating,
+    build_classifier,
+    build_vader_classifier,
     load_reviews_with_ids,
     run_sentiment_analysis,
     to_output_frame,
@@ -54,6 +56,12 @@ def main() -> None:
         type=Path,
         default=ROOT / "data" / "processed" / "sentiment_by_bank_rating.csv",
     )
+    parser.add_argument(
+        "--backend",
+        choices=["auto", "distilbert", "vader"],
+        default="auto",
+        help="Sentiment backend (auto tries DistilBERT, falls back to VADER)",
+    )
     args = parser.parse_args()
 
     if not args.cleaned.is_file():
@@ -61,14 +69,41 @@ def main() -> None:
     if not args.raw.is_file():
         raise SystemExit(f"Missing raw data: {args.raw}. Run scrape_play_reviews.py first.")
 
-    print(f"Loading reviews (model: {MODEL_NAME})...")
     df = load_reviews_with_ids(args.cleaned, args.raw)
-    print(f"Classifying {len(df)} reviews...")
-    analyzed = run_sentiment_analysis(df)
+    classifier = None
+    backend_used = args.backend
+
+    if args.backend in ("auto", "distilbert"):
+        try:
+            print(f"Loading DistilBERT ({MODEL_NAME})...")
+            classifier = build_classifier()
+            backend_used = "distilbert"
+        except Exception as exc:
+            if args.backend == "distilbert":
+                raise
+            print(f"DistilBERT unavailable ({exc}); falling back to VADER.")
+            classifier = build_vader_classifier()
+            backend_used = "vader"
+    else:
+        print("Using VADER sentiment backend.")
+        classifier = build_vader_classifier()
+        backend_used = "vader"
+
+    print(f"Classifying {len(df)} reviews with {backend_used}...")
+    analyzed = run_sentiment_analysis(df, classifier=classifier)
 
     output = to_output_frame(analyzed)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     output.to_csv(args.output, index=False, encoding="utf-8")
+
+    full_path = args.output.parent / "reviews_analyzed_full.csv"
+    cols = [
+        "review_id", "review_text", "rating", "date", "bank", "source",
+        "sentiment_label", "sentiment_score", "signed_sentiment", "identified_theme",
+    ]
+    analyzed.loc[:, [c for c in cols if c in analyzed.columns]].to_csv(
+        full_path, index=False, encoding="utf-8"
+    )
 
     by_bank = aggregate_by_bank(analyzed)
     by_rating = aggregate_by_bank_and_rating(analyzed)
