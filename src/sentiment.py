@@ -56,6 +56,30 @@ def build_classifier(model_name: str = MODEL_NAME):
     )
 
 
+def build_vader_classifier():
+    """Lexicon-based fallback when Transformers/Hugging Face is unavailable."""
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+    analyzer = SentimentIntensityAnalyzer()
+
+    class VaderWrapper:
+        def __call__(self, texts: Sequence[str]) -> list[dict]:
+            out = []
+            for text in texts:
+                scores = analyzer.polarity_scores(str(text))
+                compound = scores["compound"]
+                if compound >= 0.05:
+                    label, score = "POSITIVE", min(0.99, 0.55 + abs(compound) * 0.4)
+                elif compound <= -0.05:
+                    label, score = "NEGATIVE", min(0.99, 0.55 + abs(compound) * 0.4)
+                else:
+                    label, score = "NEUTRAL", 0.5
+                out.append({"label": label, "score": score})
+            return out
+
+    return VaderWrapper()
+
+
 def classify_texts(
     texts: Sequence[str],
     classifier=None,
@@ -72,7 +96,12 @@ def classify_texts(
         if isinstance(results, dict):
             results = [results]
         for item in results:
-            predictions.append(map_binary_to_three_way(item["label"], float(item["score"])))
+            label = str(item["label"]).upper()
+            score = float(item["score"])
+            if label == "NEUTRAL":
+                predictions.append(SentimentPrediction("neutral", score, 0.0))
+            else:
+                predictions.append(map_binary_to_three_way(label, score))
     return predictions
 
 
@@ -84,9 +113,15 @@ def load_reviews_with_ids(
     cleaned = pd.read_csv(cleaned_path).rename(columns={"review": "review_text"})
     raw = pd.read_json(raw_json_path).rename(columns={"review": "review_text"})
 
+    for frame in (cleaned, raw):
+        frame["date"] = pd.to_datetime(frame["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        frame["rating"] = pd.to_numeric(frame["rating"], errors="coerce").astype("Int64")
+        frame["review_text"] = frame["review_text"].astype(str).str.strip()
+
     merge_cols = ["review_text", "rating", "date", "bank"]
+    raw_unique = raw.drop_duplicates(subset=merge_cols, keep="first")
     merged = cleaned.merge(
-        raw[["review_id", *merge_cols]],
+        raw_unique[["review_id", *merge_cols]],
         on=merge_cols,
         how="left",
     )

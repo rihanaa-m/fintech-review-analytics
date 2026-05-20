@@ -1,0 +1,53 @@
+{
+  "BOA": {
+    "avg_rating": 3.66,
+    "pct_positive": 52.8,
+    "pct_negative": 17.2,
+    "satisfaction_drivers": [
+      "Strong positive sentiment around UI & Design",
+      "High ratings (4\u20135 stars) on usability praise in review text"
+    ],
+    "pain_points": [
+      "Recurring negative feedback on UI & Design",
+      "1-star reviews cite crashes, OTP, or slow transfers"
+    ],
+    "recommendations": [
+      "Prioritize fixes for UI & Design in next sprint",
+      "Invest in transfer speed and login reliability monitoring"
+    ]
+  },
+  "CBE": {
+    "avg_rating": 4.16,
+    "pct_positive": 69.2,
+    "pct_negative": 10.2,
+    "satisfaction_drivers": [
+      "Strong positive sentiment around UI & Design",
+      "High ratings (4\u20135 stars) on usability praise in review text"
+    ],
+    "pain_points": [
+      "Recurring negative feedback on UI & Design",
+      "1-star reviews cite crashes, OTP, or slow transfers"
+    ],
+    "recommendations": [
+      "Prioritize fixes for UI & Design in next sprint",
+      "Invest in transfer speed and login reliability monitoring"
+    ]
+  },
+  "Dashen": {
+    "avg_rating": 3.98,
+    "pct_positive": 66.8,
+    "pct_negative": 13.5,
+    "satisfaction_drivers": [
+      "Strong positive sentiment around UI & Design",
+      "High ratings (4\u20135 stars) on usability praise in review text"
+    ],
+    "pain_points": [
+      "Recurring negative feedback on UI & Design",
+      "1-star reviews cite crashes, OTP, or slow transfers"
+    ],
+    "recommendations": [
+      "Prioritize fixes for UI & Design in next sprint",
+      "Invest in transfer speed and login reliability monitoring"
+    ]
+  }
+}
